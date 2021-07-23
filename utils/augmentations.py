@@ -8,7 +8,7 @@ from math import sqrt
 
 from data import cfg, MEANS, STD
 
-from cuda import default_device
+from .cuda import default_device
 
 def intersect(box_a, box_b):
     max_xy = np.minimum(box_a[:, 2:], box_b[2:])
