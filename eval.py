@@ -178,9 +178,8 @@ def prep_display(dets_out, img, h, w, undo_transform=True, class_color=False, ma
             if not undo_transform:
                 # The image might come in as RGB or BRG, depending
                 color = (color[2], color[1], color[0])
-            if on_gpu is not None:
-                color = torch.Tensor(color).to(on_gpu).float() / 255.
-                color_cache[on_gpu][color_idx] = color
+            color = torch.Tensor(color).to(on_gpu or "cpu").float() / 255.
+            color_cache[on_gpu][color_idx] = color
             return color
 
     # First, draw the masks on the GPU where we can do it really fast
@@ -238,9 +237,10 @@ def prep_display(dets_out, img, h, w, undo_transform=True, class_color=False, ma
             x1, y1, x2, y2 = boxes[j, :]
             color = get_color(j)
             score = scores[j]
+            color_tuple=tuple(color.cpu().tolist())
 
             if args.display_bboxes:
-                cv2.rectangle(img_numpy, (x1, y1), (x2, y2), color, 1)
+                cv2.rectangle(img_numpy, (x1, y1), (x2, y2), color_tuple, 1)
 
             if args.display_text:
                 _class = cfg.dataset.class_names[classes[j]]
@@ -255,7 +255,7 @@ def prep_display(dets_out, img, h, w, undo_transform=True, class_color=False, ma
                 text_pt = (x1, y1 - 3)
                 text_color = [255, 255, 255]
 
-                cv2.rectangle(img_numpy, (x1, y1), (x1 + text_w, y1 - text_h - 4), color, -1)
+                cv2.rectangle(img_numpy, (x1, y1), (x1 + text_w, y1 - text_h - 4), color_tuple, -1)
                 cv2.putText(img_numpy, text_str, text_pt, font_face, font_scale, text_color, font_thickness, cv2.LINE_AA)
             
     
