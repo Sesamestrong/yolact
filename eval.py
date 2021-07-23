@@ -3,7 +3,7 @@ from yolact import Yolact
 from utils.augmentations import BaseTransform, FastBaseTransform, Resize
 from utils.functions import MovingAverage, ProgressBar
 from layers.box_utils import jaccard, center_size, mask_iou
-from utils import timer
+from utils import timer,has_cuda,default_device
 from utils.functions import SavePath
 from layers.output_utils import postprocess, undo_image_transformation
 import pycocotools
@@ -387,11 +387,11 @@ def prep_metrics(ap_data, dets, img, gt, gt_masks, h, w, num_crowd, image_id, de
     """ Returns a list of APs for this image, with each element being for a class  """
     if not args.output_coco_json:
         with timer.env('Prepare gt'):
-            gt_boxes = torch.Tensor(gt[:, :4])
+            gt_boxes = torch.Tensor(gt[:, :4]).to(default_device)
             gt_boxes[:, [0, 2]] *= w
             gt_boxes[:, [1, 3]] *= h
             gt_classes = list(gt[:, 4].astype(int))
-            gt_masks = torch.Tensor(gt_masks).view(-1, h*w)
+            gt_masks = torch.Tensor(gt_masks).to(default_device).view(-1, h*w)
 
             if num_crowd > 0:
                 split = lambda x: (x[-num_crowd:], x[:-num_crowd])

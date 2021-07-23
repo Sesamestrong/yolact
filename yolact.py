@@ -14,12 +14,12 @@ from layers.interpolate import InterpolateModule
 from backbone import construct_backbone
 
 import torch.backends.cudnn as cudnn
-from utils import timer
+from utils import timer,has_cuda,default_device
 from utils.functions import MovingAverage, make_net
 
 # This is required for Pytorch 1.0.1 on Windows to initialize Cuda on some driver versions.
 # See the bug report here: https://github.com/pytorch/pytorch/issues/17108
-torch.cuda.current_device()
+if has_cuda: torch.cuda.current_device()
 
 # As of March 10, 2019, Pytorch DataParallel still doesn't support JIT Script Modules
 use_jit = torch.cuda.device_count() <= 1
@@ -245,7 +245,7 @@ class PredictionModule(nn.Module):
 
                                 prior_data += [x, y, w, h]
 
-                self.priors = torch.Tensor(prior_data, device=device).view(-1, 4).detach()
+                self.priors = torch.Tensor(prior_data).to(device).view(-1, 4).detach()
                 self.priors.requires_grad = False
                 self.last_img_size = (cfg._tmp_img_w, cfg._tmp_img_h)
                 self.last_conv_size = (conv_w, conv_h)
@@ -476,7 +476,7 @@ class Yolact(nn.Module):
     
     def load_weights(self, path):
         """ Loads weights from a compressed save file. """
-        state_dict = torch.load(path)
+        state_dict = torch.load(path,map_location=default_device)
 
         # For backward compatability, remove these (the new variable is called layers)
         for key in list(state_dict.keys()):
@@ -693,9 +693,9 @@ if __name__ == '__main__':
     net.train()
     net.init_weights(backbone_path='weights/' + cfg.backbone.path)
 
-    # GPU
-    net = net.cuda()
-    torch.set_default_tensor_type('torch.cuda.FloatTensor')
+    if has_cuda:
+        # GPU
+        net = net.cuda()
 
     x = torch.zeros((1, 3, cfg.max_size, cfg.max_size))
     y = net(x)
