@@ -178,10 +178,10 @@ def prep_display(dets_out, img, h, w, undo_transform=True, class_color=False, ma
             if not undo_transform:
                 # The image might come in as RGB or BRG, depending
                 color = (color[2], color[1], color[0])
+            color = torch.Tensor(color)
             if on_gpu is not None:
-                color = torch.Tensor(color).to(on_gpu)
-                color=color.float()/255.
-                color_cache[on_gpu][color_idx] = color
+                color=color.to(on_gpu).float()/255.
+            color_cache[on_gpu][color_idx] = color
             return color
 
     # First, draw the masks on the GPU where we can do it really fast
