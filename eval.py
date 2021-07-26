@@ -179,7 +179,7 @@ def prep_display(dets_out, img, h, w, undo_transform=True, class_color=False, ma
                 # The image might come in as RGB or BRG, depending
                 color = (color[2], color[1], color[0])
             if on_gpu is not None:
-                color = torch.Tensor(color).to(on_gpu or "cpu")
+                color = torch.Tensor(color).to(on_gpu)
                 color=color.float()/255.
                 color_cache[on_gpu][color_idx] = color
             return color
@@ -193,7 +193,7 @@ def prep_display(dets_out, img, h, w, undo_transform=True, class_color=False, ma
         
         # Prepare the RGB images for each mask given their color (size [num_dets, h, w, 1])
         colors = torch.cat([get_color(j, on_gpu=img_gpu.device.index).view(1, 1, 1, 3) for j in range(num_dets_to_consider)], dim=0)
-        print(colors.device,masks.device,mask_alpha)
+        print(colors.device,masks.device,img_gpu.device)
         masks_color = masks.repeat(1, 1, 1, 3) * colors * mask_alpha
 
         # This is 1 everywhere except for 1-mask_alpha where the mask is
