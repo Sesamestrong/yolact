@@ -14,8 +14,8 @@ from layers.interpolate import InterpolateModule
 from backbone import construct_backbone
 
 import torch.backends.cudnn as cudnn
-from utils import timer,has_cuda,default_device
-from utils.functions import MovingAverage, make_net
+from yolact_utils import timer,has_cuda,default_device
+from yolact_utils.functions import MovingAverage, make_net
 
 # This is required for Pytorch 1.0.1 on Windows to initialize Cuda on some driver versions.
 # See the bug report here: https://github.com/pytorch/pytorch/issues/17108
@@ -680,7 +680,7 @@ class Yolact(nn.Module):
 
 # Some testing code
 if __name__ == '__main__':
-    from utils.functions import init_console
+    from yolact_utils.functions import init_console
     init_console()
 
     # Use the first argument to set the config if you want

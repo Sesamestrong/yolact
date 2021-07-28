@@ -1,10 +1,10 @@
 from data import COCODetection, get_label_map, MEANS, COLORS
 from yolact import Yolact
-from utils.augmentations import BaseTransform, FastBaseTransform, Resize
-from utils.functions import MovingAverage, ProgressBar
+from yolact_utils.augmentations import BaseTransform, FastBaseTransform, Resize
+from yolact_utils.functions import MovingAverage, ProgressBar
 from layers.box_utils import jaccard, center_size, mask_iou
-from utils import timer,has_cuda,default_device
-from utils.functions import SavePath
+from yolact_utils import timer,has_cuda,default_device
+from yolact_utils.functions import SavePath
 from layers.output_utils import postprocess, undo_image_transformation
 import pycocotools
 

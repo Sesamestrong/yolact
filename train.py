@@ -1,8 +1,8 @@
 from data import *
-from utils.augmentations import SSDAugmentation, BaseTransform
-from utils.functions import MovingAverage, SavePath
-from utils.logger import Log
-from utils import timer
+from yolact_utils.augmentations import SSDAugmentation, BaseTransform
+from yolact_utils.functions import MovingAverage, SavePath
+from yolact_utils.logger import Log
+from yolact_utils import timer
 from layers.modules import MultiBoxLoss
 from yolact import Yolact
 import os
